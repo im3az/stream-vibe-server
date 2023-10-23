@@ -27,6 +27,22 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    const movieCollection = client.db("streamVibe").collection("movies");
+
+    app.get("/movie", async (req, res) => {
+      const cursor = movieCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.post("/movie", async (req, res) => {
+      const newMovie = req.body;
+      // console.log(newMovie);
+      const result = await movieCollection.insertOne(newMovie);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
@@ -34,7 +50,7 @@ async function run() {
     );
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
