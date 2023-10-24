@@ -29,10 +29,18 @@ async function run() {
     await client.connect();
 
     const movieCollection = client.db("streamVibe").collection("movies");
+    const cartCollection = client.db("streamVibe").collection("cart");
 
     app.get("/movies", async (req, res) => {
       const cursor = movieCollection.find();
       const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.post("/movies", async (req, res) => {
+      const newMovie = req.body;
+      // console.log(newMovie);
+      const result = await movieCollection.insertOne(newMovie);
       res.send(result);
     });
 
@@ -43,10 +51,15 @@ async function run() {
       res.send(details);
     });
 
-    app.post("/movies", async (req, res) => {
-      const newMovie = req.body;
-      // console.log(newMovie);
-      const result = await movieCollection.insertOne(newMovie);
+    app.get("/cart", async (req, res) => {
+      const cursor = cartCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.post("/cart", async (req, res) => {
+      const newItem = req.body;
+      const result = await cartCollection.insertOne(newItem);
       res.send(result);
     });
 
